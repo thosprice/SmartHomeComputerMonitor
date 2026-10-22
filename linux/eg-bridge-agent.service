@@ -1,0 +1,19 @@
+[Unit]
+Description=EventGhost Bridge Agent (Hubitat heartbeat/ping/sleep bridge)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Runs as whichever account owns this systemd --user instance (no User= line
+# needed -- that's what "--user" already determines). Install under
+# ~/.config/systemd/user/, enable with `systemctl --user enable --now`, and
+# run `loginctl enable-linger <username>` so it starts at boot even without
+# an active login. See install notes for the alternative root/system-service
+# setup if you'd rather bind to port 80 directly.
+ExecStart=/usr/bin/python3 /home/REPLACE_WITH_USERNAME/eg-bridge-agent.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
