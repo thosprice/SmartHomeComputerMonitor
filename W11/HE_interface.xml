@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Sample EventGhost xml file to interface with HE Computer Monitor App.
+The macros implement initial ping to HE on boot/wake, periodic heartbeat, and response to a ping 
+request from the Hubitat hub.  
+
+An additional folder of macros includes the sleep request handler that is triggered when the Computer device 
+on HE has its switch toggled off.
+
+To configure the HE interface, set the Global configuration URL for HTTP GET requests to the MakerAPI URL for your device,
+of the form 'http://hubitat.local/apps/api/<APP_ID>/devices/<DEVICE_ID>/heartbeat?access_token=<ACCESS_TOKEN>'.
+Values of APP_ID and ACCESS_TOKEN can be obtained from the MakerAPI setup page in the sample URLs, and DEVICE_ID
+is in the URL at the top of the page when you view the device page on the hub in its own window.  This value
+is also shown on the left end of logged entries for the device.
+
+You also need to configure the EG Webserver plug-in to listen on the same port that the HE device transmits to, set
+in device preferences on HE.
+
+-->
+<EventGhost Version="0.5.0-rc7" Guid="{07C2D8CB-D78F-49F4-BCF0-B0EA19955AAC}" Time="1792717120.82">
+    <Autostart Name="Autostart" XML_Guid="{A5862D32-F562-4059-81BB-CF695A879F0F}" Expanded="True">
+        <Action Name="Global configuration URL for HTTP GET requests" XML_Guid="{3CEF0859-8F87-4B35-AA42-C6D0143BBC61}">
+            EventGhost.PythonCommand(u'eg.globals.target_url = "http://hubitat.local/apps/api/<APP_ID>/devices/<DEVICE_ID>/heartbeat?access_token=<ACCESS_TOKEN>"\n')
+        </Action>
+        <Plugin XML_Guid="{2C7DCFD0-EF21-47EB-9140-EC47301F820A}" Identifier="Webserver" Guid="{E4305D8E-A3D3-4672-B06E-4EA1F0F6C673}" File="Webserver">
+            gAIoWAQAAABIVFRQcQBLUFgAAAAAcQFYCgAAAEV2ZW50R2hvc3RxAmgBaAF9cQOJWAEAAAAscQRYAgAAADs7cQVoAWgBiXRxBi4=
+        </Plugin>
+        <Plugin XML_Guid="{240216B3-7404-4ADA-8672-ADC65BE336C6}" Identifier="Keyboard" Guid="{59CBD10F-C1D8-4ADB-999B-9B76BA360F1F}" File="Keyboard">
+            gAKIhXEALg==
+        </Plugin>
+        <Plugin XML_Guid="{F4B2526F-4B1D-47CA-8FFF-0AA426331ADE}" Identifier="Timer" Guid="{6149CA99-1FCD-4450-9160-7543BC20CFD3}" File="Timer">
+            gAIpLg==
+        </Plugin>
+    </Autostart>
+    <Folder Name="Hubitat update computer status" XML_Guid="{18A425B6-71AD-49F1-AD4E-53503EDA4466}" Expanded="True">
+        <Macro Name="Send Computer heartbeat to HE on wake from sleep or cold boot" XML_Guid="{746B5696-B1C0-4762-A682-BB5B81F25A01}" Expanded="True">
+            <Event Name="Main.OnInit" XML_Guid="{D9C7E45F-C78E-417A-92BF-C513B76D60D0}" />
+            <Event Name="System.ResumeAutomatic" XML_Guid="{4304BD15-6D8B-4549-AD7F-BF35FE2A47AF}" />
+            <Action XML_Guid="{BF53C78E-55D8-4F6B-8A4A-5C353AFEC362}">
+                EventGhost.EnableItem(XmlIdLink(29))
+            </Action>
+            <Action XML_Guid="{AC3CD236-4DEF-468B-82B4-08D8ABB64A06}">
+                EventGhost.DisableItem(XmlIdLink(36))
+            </Action>
+            <Action Name="Start timer for periodic heartbeat refresh (3 minutes)" XML_Guid="{94147283-2DD1-4A81-B47A-161E578EDB9E}">
+                Timer.TimerAction(u'HE Refresh', 0, 0, 180.0, u'refresh.he', False, True, 1, u'00:00:00')
+            </Action>
+            <Action Name="Update HE now" XML_Guid="{61E070F0-0961-4D0D-94CF-CEF43463D83C}">
+                EventGhost.TriggerEvent(u'Timer.refresh.he', 0.0, u'8', False, False, True)
+            </Action>
+        </Macro>
+        <Macro Name="Respond to refresh request from Task Scheduler" XML_Guid="{A77F0E48-3E67-4C0C-9D7A-7419C265AA95}">
+            <Event Name="HTTP.TaskScheduler.Ping" XML_Guid="{50BE86CF-7289-4367-85C7-993556B51EAB}" />
+            <Action Name="Task scheduler pings every hour to make sure EG is running" XML_Guid="{27E5FDE4-745A-49B3-92AC-880CCD451A0C}">
+                EventGhost.Comment()
+            </Action>
+            <Action Name="This triggers an extra ping to HE." XML_Guid="{27E5FDE4-745A-49B3-92AC-880CCD451A0C}">
+                EventGhost.Comment()
+            </Action>
+            <Action Name="Update HE now" XML_Guid="{61E070F0-0961-4D0D-94CF-CEF43463D83C}">
+                EventGhost.TriggerEvent(u'Timer.refresh.he', 0.0, None, False, False, True)
+            </Action>
+        </Macro>
+        <Macro Name="Respond to HE-initiated refresh request" XML_Guid="{A77F0E48-3E67-4C0C-9D7A-7419C265AA95}">
+            <Event Name="HTTP.Hubitat.Ping" XML_Guid="{BF6B8AB1-8687-45E4-A4A9-8D8DA16CABC7}" />
+            <Action Name="HE queries when needed by pinging to make sure the computer is on / EG is running." XML_Guid="{7F5841EE-129D-47E5-AF60-ED9439F27F34}">
+                EventGhost.Comment()
+            </Action>
+            <Action Name="Optional event payload is the timer interval for future heartbeats." XML_Guid="{7F5841EE-129D-47E5-AF60-ED9439F27F34}">
+                EventGhost.Comment()
+            </Action>
+            <Action Name="Restart heartbeat refresh timer with HE settings" XML_Guid="{43997521-6031-4480-88AF-F06045D1D75E}">
+                EventGhost.PythonScript(u'# HE queries by pinging with the expected heartbeat interval as payload \n# if no payload is received for any reason, a 3 minute default is used.\ntry:\n    # Try to convert the payload to a float\n    seconds = float(eg.event.payload[0])\nexcept (IndexError, ValueError, TypeError):\n    # Fallback to 180 if the payload is missing, empty, or not a number\n    seconds = 180.0\n\n# Run the timer action using the verified seconds value\neg.PrintNotice(u"Ping received. Setting timer duration to %d seconds." % (seconds,))\neg.plugins.Timer.TimerAction(u\'HE Refresh\', 0, 0, seconds, u\'refresh.he\', False, True, 1, u\'00:00:00\')')
+            </Action>
+            <Action Name="Update HE now" XML_Guid="{61E070F0-0961-4D0D-94CF-CEF43463D83C}">
+                EventGhost.TriggerEvent(u'Timer.refresh.he', 0.0, None, False, False, True)
+            </Action>
+        </Macro>
+        <Macro Name="Periodic heartbeat refresh for HE" XML_Guid="{41FB9BEA-3349-4552-B39C-9FD60AFE7DF6}" Expanded="True">
+            <Event Name="Timer.refresh.he" XML_Guid="{78D0C57B-5997-4E3D-AB45-D4D9F096794C}" />
+            <Action Name="Send heartbeat to HE. Optional event payload is # of retries if fail." XML_Guid="{66A96848-40AF-47E8-9DC0-C6ED84ED43B0}">
+                EventGhost.PythonScript(u'import urllib2\nimport time\n\n# Send heartbeat to HE. Optional event payload is # of retries in [2,20] if fail.\n\nMIN_RETRIES = 2\nMAX_RETRIES = 20\n\n# payload, if present, is expected to be an integer between 2 and 20.\ndef extract_retries_override(payload, default=1):\n    if not payload:\n        return default\n\n    try:\n        retries = int(payload)\n    except (ValueError, TypeError):\n        eg.PrintWarningNotice(u"Couldn\'t parse retries from payload %r -- using default (%d)" % (payload, default))\n        return default\n\n    clamped = max(MIN_RETRIES, min(MAX_RETRIES, retries))\n    if clamped != retries:\n        eg.PrintWarningNotice(u"Retries value %d out of range -- clamped to %d" % (retries, clamped))\n    return clamped\n\ndef send_heartbeat(retries=1, delay=2):\n    url = eg.globals.target_url\n    for attempt in range(1, retries + 1):\n        try:\n            urllib2.urlopen(url, timeout=5)\n            eg.PrintDebugNotice(u"Heartbeat sent (attempt %d/%d)" % (attempt, retries))\n            return True\n        except Exception as e:\n            eg.PrintError(u"Heartbeat attempt %d/%d failed: %s" % (attempt, retries, e))\n            if attempt &lt; retries:\n                time.sleep(delay)\n    eg.PrintError(u"Heartbeat failed after %d attempts -- giving up" % retries)\n    return False\n\nretries = extract_retries_override(eg.event.payload)\nsend_heartbeat(retries=retries)')
+            </Action>
+        </Macro>
+    </Folder>
+    <Folder Name="Respond to HE sleep request" XML_Guid="{EAF9CE00-06A9-4122-963C-77FDC3560ACA}" Expanded="True">
+        <Macro Name="Process HE sleep request" id="29" XML_Guid="{B4E9A8E7-99E3-4952-9885-FCAB76F89EDC}">
+            <Event Name="HTTP.Hubitat.Sleep" XML_Guid="{448620AC-BA12-447C-A6A8-AD00C4722714}" />
+            <Event Name="Keyboard.Ctrl+Win+E" XML_Guid="{17259CAB-C293-4D55-B44A-DF6DADC6A76A}" />
+            <Action XML_Guid="{0A017469-CDF9-422F-A880-AAC79AFA747A}">
+                EventGhost.ShowOSD(u'Sleep command received.\n\nPress Ctrl + Win key to cancel in the next 45s.', u'0;-30;0;0;0;700;0;0;0;1;0;0;2;32;Arial', (255, 255, 255), (223, 223, 223), 4, (0, 0), 0, 44.0, u'Win10')
+            </Action>
+            <Action XML_Guid="{8132AFE1-8329-4F18-89F4-5125C3FB1C73}">
+                EventGhost.EnableItem(XmlIdLink(36))
+            </Action>
+            <Action XML_Guid="{0E6BBD9A-7BA7-4866-B383-75244298AF26}">
+                EventGhost.DisableItem(XmlIdLink(29))
+            </Action>
+            <Action Name="Start confirmation timer" XML_Guid="{E744CCC9-F69E-4589-B715-392B988A5621}">
+                Timer.TimerAction(u'Sleep dialog', 0, 1, 45.0, u'sleep.execute', False, True, 1, u'00:00:00')
+            </Action>
+        </Macro>
+        <Macro Name="Cancel sleep request" id="36" Enabled="False" XML_Guid="{B2BEAD4F-1D0F-40B0-AC5A-D282C56F9914}">
+            <Event Name="Keyboard.Ctrl+Win" XML_Guid="{C5BCE546-9219-4F9F-AD31-245F90FBFDA6}" />
+            <Event Name="HTTP.Hubitat.Cancel.Sleep.Request" XML_Guid="{8DB2ABF9-2AD4-4B36-8E38-517F4A07144F}" />
+            <Action Name="Abort confirmation timer on hotkey or HE cancellation" XML_Guid="{5FFBAA0C-E5B2-4465-9E23-D36DBD5CB1D0}">
+                Timer.TimerAction(u'Sleep dialog', 4, 1, 10.0, u'sleep.execute', False, True, 1, u'00:00:00')
+            </Action>
+            <Action XML_Guid="{AC3CD236-4DEF-468B-82B4-08D8ABB64A06}">
+                EventGhost.DisableItem(XmlIdLink(36))
+            </Action>
+            <Action XML_Guid="{630AF3DC-4B70-4C5F-A1F8-5C68A35C3424}">
+                EventGhost.EnableItem(XmlIdLink(29))
+            </Action>
+            <Action XML_Guid="{C1D1AA2D-4F5E-41F7-A5AE-114DF4A0151B}">
+                EventGhost.ShowOSD(u'Canceling . . .', u'0;-30;0;0;0;700;0;0;0;1;0;0;2;32;Arial', (255, 255, 255), (223, 223, 223), 4, (0, 0), 0, 2.0, u'Win10')
+            </Action>
+            <Action Name="Update HE now" XML_Guid="{61E070F0-0961-4D0D-94CF-CEF43463D83C}">
+                EventGhost.TriggerEvent(u'Timer.refresh.he', 0.0, None, False, False, True)
+            </Action>
+        </Macro>
+        <Macro Name="Sleep system " XML_Guid="{86A75129-A5E1-42B5-A51C-9A1E6B9B33D2}">
+            <Event Name="Timer.sleep.execute" XML_Guid="{7B29600C-017C-44D4-82B4-A357AB3D95EB}" />
+            <Action XML_Guid="{8BA20DEC-BC4C-412F-9685-E4BF413C26C1}">
+                EventGhost.DisableItem(XmlIdLink(36))
+            </Action>
+            <Action XML_Guid="{630AF3DC-4B70-4C5F-A1F8-5C68A35C3424}">
+                EventGhost.EnableItem(XmlIdLink(29))
+            </Action>
+            <Action Name="Abort refresh timer before sleeping" XML_Guid="{5FFBAA0C-E5B2-4465-9E23-D36DBD5CB1D0}">
+                Timer.TimerAction(u'HE Refresh', 4, 1, 10.0, u'sleep.execute', False, True, 1, u'00:00:00')
+            </Action>
+            <Action Name="Sleep computer" XML_Guid="{42400C41-D641-43AD-BF0F-069EB430AA22}">
+                System.Standby(False)
+            </Action>
+        </Macro>
+    </Folder>
+</EventGhost>
