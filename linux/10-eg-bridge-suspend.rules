@@ -1,17 +1,19 @@
-// Allows the EventGhost Bridge Agent (running as 'gustavo') to suspend the
+// Allows the EventGhost Bridge Agent (running as <user>) to suspend the
 // system without an interactive polkit prompt, regardless of which account
 // currently has the active/foreground session. Without this, polkit's
 // default "implicit active session" rule only authorizes suspend silently
 // when gustavo's own session is the active one -- if a different account
-// (e.g. tom) is active, the request instead queues a password challenge
+// (e.g. <other_user>) is active, the request instead queues a password challenge
 // that can surface awkwardly on session switch.
 //
 // Scoped narrowly: this grants nothing beyond the single suspend action for
 // this one account.
+//
+// Replace <user> with the login name of the account that will receive sleep requests
 
 polkit.addRule(function(action, subject) {
     if (action.id == "org.freedesktop.login1.suspend" &&
-        subject.user == "gustavo") {
+        subject.user == "<user>") {
         return polkit.Result.YES;
     }
 });
