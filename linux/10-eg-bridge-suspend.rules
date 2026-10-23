@@ -2,7 +2,7 @@
 // system without an interactive polkit prompt, regardless of which account
 // currently has the active/foreground session. Without this, polkit's
 // default "implicit active session" rule only authorizes suspend silently
-// when gustavo's own session is the active one -- if a different account
+// when <user>'s own session is the active one -- if a different account
 // (e.g. <other_user>) is active, the request instead queues a password challenge
 // that can surface awkwardly on session switch.
 //
