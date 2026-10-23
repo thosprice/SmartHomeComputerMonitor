@@ -14,7 +14,7 @@ is also shown on the left end of logged entries for the device.
 
 You also need to configure the EG Webserver plug-in to listen on the same port that the HE device transmits to, set
 in device preferences on HE.
-
+ 
 -->
 <EventGhost Version="0.5.0-rc7" Guid="{07C2D8CB-D78F-49F4-BCF0-B0EA19955AAC}" Time="1792717120.82">
     <Autostart Name="Autostart" XML_Guid="{A5862D32-F562-4059-81BB-CF695A879F0F}" Expanded="True">
@@ -46,18 +46,6 @@ in device preferences on HE.
             </Action>
             <Action Name="Update HE now" XML_Guid="{61E070F0-0961-4D0D-94CF-CEF43463D83C}">
                 EventGhost.TriggerEvent(u'Timer.refresh.he', 0.0, u'8', False, False, True)
-            </Action>
-        </Macro>
-        <Macro Name="Respond to refresh request from Task Scheduler" XML_Guid="{A77F0E48-3E67-4C0C-9D7A-7419C265AA95}">
-            <Event Name="HTTP.TaskScheduler.Ping" XML_Guid="{50BE86CF-7289-4367-85C7-993556B51EAB}" />
-            <Action Name="Task scheduler pings every hour to make sure EG is running" XML_Guid="{27E5FDE4-745A-49B3-92AC-880CCD451A0C}">
-                EventGhost.Comment()
-            </Action>
-            <Action Name="This triggers an extra ping to HE." XML_Guid="{27E5FDE4-745A-49B3-92AC-880CCD451A0C}">
-                EventGhost.Comment()
-            </Action>
-            <Action Name="Update HE now" XML_Guid="{61E070F0-0961-4D0D-94CF-CEF43463D83C}">
-                EventGhost.TriggerEvent(u'Timer.refresh.he', 0.0, None, False, False, True)
             </Action>
         </Macro>
         <Macro Name="Respond to HE-initiated refresh request" XML_Guid="{A77F0E48-3E67-4C0C-9D7A-7419C265AA95}">
