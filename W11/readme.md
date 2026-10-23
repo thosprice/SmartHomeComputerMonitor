@@ -13,4 +13,4 @@ select Configure.
 Right-click on the Webserver plugin and make sure it is using the same port set in the HE computer bridge device preferences.
 
 EventGhost will receive events from the hub, sent to the computer's IP.  It is possible that a firewall or antivirus software
-will interfere with this.  
+will block the incoming HTTP.  It's not possible to offer any further specific advice on configuring your system.
