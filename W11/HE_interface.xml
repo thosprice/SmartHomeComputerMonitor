@@ -18,7 +18,7 @@ in device preferences on HE.
 -->
 <EventGhost Version="0.5.0-rc7" Guid="{07C2D8CB-D78F-49F4-BCF0-B0EA19955AAC}" Time="1792717120.82">
     <Autostart Name="Autostart" XML_Guid="{A5862D32-F562-4059-81BB-CF695A879F0F}" Expanded="True">
-        <Action Name="Global configuration URL for HTTP GET requests" XML_Guid="{3CEF0859-8F87-4B35-AA42-C6D0143BBC61}">
+        <Action Name="URL for Hubitat HTTP GET requests" XML_Guid="{3CEF0859-8F87-4B35-AA42-C6D0143BBC61}">
             EventGhost.PythonCommand(u'eg.globals.target_url = "http://hubitat.local/apps/api/<APP_ID>/devices/<DEVICE_ID>/heartbeat?access_token=<ACCESS_TOKEN>"\n')
         </Action>
         <Plugin XML_Guid="{2C7DCFD0-EF21-47EB-9140-EC47301F820A}" Identifier="Webserver" Guid="{E4305D8E-A3D3-4672-B06E-4EA1F0F6C673}" File="Webserver">
