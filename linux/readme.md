@@ -67,9 +67,21 @@ When Hubitat transmits a sleep request (triggered by toggling the bridge device 
 
 7. Enable Wake-on-LAN
 
-Check support with sudo ethtool <iface>, and look for g under “Supports Wake-on”.
-Enable it with sudo ethtool -s <iface> wol g.
-Make it persistent with nmcli connection modify "<wired connection name>" 802-3-ethernet.wake-on-lan magic.
+Check support with 
+
+bash
+sudo ethtool <iface>, and look for g under “Supports Wake-on”.
+
+Enable WoL with 
+
+bash
+sudo ethtool -s <iface> wol g.
+
+Make WoL persistent with 
+
+bash
+nmcli connection modify "<wired connection name>" 802-3-ethernet.wake-on-lan magic.
+
 Enable Wake on LAN in the BIOS/UEFI.
 
 Final checks:
