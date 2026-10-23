@@ -4,14 +4,7 @@ Files to implement in Linux.  Developed for Mint / XCFE.
 
 Both the computer and hub require a static IP or DHCP reservation on the router.
 
-On Hubitat:
-
-1. Create a new device using the EventGhost Bridge driver.
-In Preferences, set the host/IP to the computer's IP, set the port (8081 recommended, must match the port set on the computer), and enter the computer's MAC address. MAC addresses can be ##:##:##:##:##:##, ##-##-##-##-##-## or ##.##.##.##.##.##, case-insensitive.  Different event names will trigger different computer script responses, and you can rename these if you wish. Expected heartbeat interval is the repeat which the computer will use to ping the hub to confirm it is awake. Click Save Preferences from a desktop browser, then reload and confirm. Note the Device ID, which is in the URL of the device page when opened in its own tab, or is the first text in log entries from the device.
-
-2. Go to the Maker API app page and authorize the new device. Note the app ID and access token, which can be found in the sample URLs at the bottom of the page.
-
-Install the Computer Monitor Parent app, then add a child instance pointed at the new device. You can choose timing intervals (independent of the ping heartbeat) after missing a ping to first check (by requesting a ping), then to time out and turn the device off.  You can have the hub use the network ping to see if the device is present on the network, but not responding to Hubitat requests, and set a device to receive notifications if it seems like EventGhost or the response script has crashed.
+See the Hubitat folder readme for Hubitat instructions.
 
 On the computer:
 
