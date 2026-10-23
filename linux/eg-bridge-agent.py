@@ -37,9 +37,9 @@ import os
 
 # ---- Configuration ----------------------------------------------------------
 
-HUB_IP = "192.168.50.211"           # Hubitat hub IP
+HUB_IP = "###.###.###.###"           # Hubitat hub IP
 MAKER_API_APP_ID = "REPLACE_ME"     # Maker API app id (from the app's URL/page)
-DEVICE_ID = "1765"                  # EventGhost Bridge device id
+DEVICE_ID = "REPLACE_ME"                  # EventGhost Bridge device id
 ACCESS_TOKEN = "REPLACE_ME"         # Maker API access token
 
 LISTEN_PORT = 80                    # Must match the driver's "EventGhost webserver port"
